@@ -169,6 +169,30 @@ section{padding:3.2rem 1.1rem}
 .hero-btns{flex-direction:column;width:100%}
 .hero-btns .btn{width:100%;justify-content:center}
 }
+
+/* Slider / Carousel */
+.slider-section{background:#0f766e;padding:1.5rem 0;overflow:hidden}
+.slider-container{max-width:1100px;margin:0 auto;position:relative}
+.slider-track{display:flex;transition:transform 0.5s ease;cursor:grab}
+.slider-track:active{cursor:grabbing}
+.slide{min-width:100%;padding:0 1.2rem;box-sizing:border-box}
+.slide-content{background:rgba(255,255,255,0.12);border-radius:18px;padding:1.5rem;display:flex;align-items:center;gap:1.2rem;backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.15);min-height:140px}
+.slide-img{width:120px;height:75px;object-fit:contain;border-radius:8px;background:#fff;padding:4px;flex-shrink:0}
+.slide-text h3{color:#fff;font-size:1.15rem;font-weight:700;margin-bottom:0.3rem}
+.slide-text p{color:rgba(255,255,255,0.85);font-size:0.9rem;margin:0}
+.slide-text .price-tag{display:inline-block;background:#f59e0b;color:#1e293b;font-weight:700;font-size:0.85rem;padding:0.25rem 0.7rem;border-radius:50px;margin-top:0.5rem}
+.slider-dots{display:flex;justify-content:center;gap:0.5rem;margin-top:1rem}
+.slider-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.4);border:none;cursor:pointer;padding:0;transition:0.3s}
+.slider-dot.active{background:#f59e0b;transform:scale(1.3)}
+.slider-btn{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.2);border:none;color:#fff;width:36px;height:36px;border-radius:50%;font-size:1.2rem;cursor:pointer;z-index:5;display:flex;align-items:center;justify-content:center}
+.slider-btn:hover{background:rgba(255,255,255,0.35)}
+.slider-prev{left:5px}
+.slider-next{right:5px}
+@media(max-width:600px){
+.slide-content{flex-direction:column;text-align:center;padding:1.2rem}
+.slide-img{width:140px;height:88px}
+}
+
 </style>
 </head>
 <body>
@@ -219,6 +243,63 @@ section{padding:3.2rem 1.1rem}
 <div class="stat-item"><h3>100%</h3><p>Quality Guarantee</p></div>
 </div>
 </div>
+
+
+<!-- SWIPING SLIDER -->
+<section class="slider-section" id="offers">
+<div class="slider-container">
+<button class="slider-btn slider-prev" onclick="moveSlide(-1)">‹</button>
+<button class="slider-btn slider-next" onclick="moveSlide(1)">›</button>
+<div class="slider-track" id="sliderTrack">
+<div class="slide">
+<div class="slide-content">
+<div class="slide-text" style="width:100%;text-align:center">
+<h3>⭐ Premium Business Cards</h3>
+<p>High quality designs for your brand. Stand out from the crowd.</p>
+<span class="price-tag">From Rs. 2999 / 1000 pcs</span>
+</div>
+</div>
+</div>
+<div class="slide">
+<div class="slide-content">
+<div class="slide-text" style="width:100%;text-align:center">
+<h3>🎨 Custom Card Design</h3>
+<p>Your logo, your colors, your style. Fully customized cards.</p>
+<span class="price-tag">Custom from Rs. 2999</span>
+</div>
+</div>
+</div>
+<div class="slide">
+<div class="slide-content">
+<div class="slide-text" style="width:100%;text-align:center">
+<h3>📦 Basic Cards Offer</h3>
+<p>Affordable professional cards for every business.</p>
+<span class="price-tag">Rs. 2499 / 1000 pcs</span>
+</div>
+</div>
+</div>
+<div class="slide">
+<div class="slide-content">
+<div class="slide-text" style="width:100%;text-align:center">
+<h3>🚚 Fast Nationwide Delivery</h3>
+<p>Order today, get delivered quickly across Pakistan.</p>
+<span class="price-tag">Call: 0370-3462062</span>
+</div>
+</div>
+</div>
+<div class="slide">
+<div class="slide-content">
+<div class="slide-text" style="width:100%;text-align:center">
+<h3>💳 Easy Payment Options</h3>
+<p>Easypaisa • NayaPay • Bank Transfer accepted</p>
+<span class="price-tag">Order Now</span>
+</div>
+</div>
+</div>
+</div>
+<div class="slider-dots" id="sliderDots"></div>
+</div>
+</section>
 
 <section class="products" id="products">
 <div class="section-header">
@@ -441,6 +522,39 @@ function openModal(src){document.getElementById('modalImg').src=src;document.get
 function closeModal(){document.getElementById('modal').classList.remove('active');document.body.style.overflow=''}
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
 function handleSubmit(e){e.preventDefault();const n=document.getElementById('name').value,p=document.getElementById('phone').value,m=document.getElementById('message').value;const t=encodeURIComponent(`Hi Local Bazaar Card!\n\nName: ${n}\nPhone: ${p}\n\nMessage: ${m}`);window.open(`https://wa.me/923703462062?text=${t}`,'_blank');e.target.reset()}
+
+// Slider
+let currentSlide=0;
+const track=document.getElementById('sliderTrack');
+const slides=track?track.children:[];
+const totalSlides=slides.length;
+const dotsContainer=document.getElementById('sliderDots');
+if(dotsContainer&&totalSlides){
+for(let i=0;i<totalSlides;i++){
+const dot=document.createElement('button');
+dot.className='slider-dot'+(i===0?' active':'');
+dot.onclick=()=>goToSlide(i);
+dotsContainer.appendChild(dot);
+}
+}
+function goToSlide(n){
+currentSlide=(n+totalSlides)%totalSlides;
+if(track)track.style.transform=`translateX(-${currentSlide*100}%)`;
+document.querySelectorAll('.slider-dot').forEach((d,i)=>d.classList.toggle('active',i===currentSlide));
+}
+function moveSlide(dir){goToSlide(currentSlide+dir)}
+// Auto play
+setInterval(()=>moveSlide(1),4000);
+// Touch swipe
+let startX=0;
+if(track){
+track.addEventListener('touchstart',e=>{startX=e.touches[0].clientX},{passive:true});
+track.addEventListener('touchend',e=>{
+const diff=startX-e.changedTouches[0].clientX;
+if(Math.abs(diff)>50)moveSlide(diff>0?1:-1);
+},{passive:true});
+}
+
 </script>
 </body>
 </html>
